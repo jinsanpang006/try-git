@@ -5,21 +5,21 @@
         <div class="logo"></div>
       </div>
 
-      <el-form class="login-form" :model="form" :rules="rules">
+      <el-form class="login-form" :model="form" :rules="rules" ref="refLogin">
         <el-form-item prop='mobile'>
           <el-input v-model="form.mobile" placeholder="请输入手机号" ></el-input>
         </el-form-item>
 
-        <el-form-item>
+        <el-form-item prop='code'>
           <el-input v-model="form.code" placeholder="请输入验证码"></el-input>
         </el-form-item>
 
-        <el-form-item>
+        <el-form-item prop="agree">
           <el-checkbox v-model="form.agree">我已阅读并同意用户协议和隐私条款</el-checkbox>
         </el-form-item>
 
         <el-form-item>
-          <el-button class="login-btn" type="primary" @click='fn'>登录</el-button>
+          <el-button class="login-btn" type="primary" @click='fn("refLogin")'>登录</el-button>
         </el-form-item>
 
       </el-form>
@@ -27,42 +27,64 @@
   </div>
 </template>
 <script>
+import { Login, userPatch } from '@/api/user.js'
+
 export default {
   name: 'Login', // 加个name, 是为了给组件起个名字, 在调试工具中能方便调试
   data () {
+    // rule 当前规则的相关信息   value 当前校验的值  callback 成功调用 callback()    失败调用  callback(error('xxxxx'))
+    const validatePass = (rule, value, callback) => {
+      // console.log(rule, value, callback)
+      if (value === false) {
+        callback(new Error('请同意许可'))
+      } else {
+        callback()
+      }
+    }
     return {
       form: {
         mobile: '13911111111',
         code: '246810',
-        agree: true
+        agree: true,
+        name: '金三胖'
       },
       rules: {
         mobile: [
+          // require:非空   必填项
           { required: true, message: '请输入手机号', trigger: ['blur', 'change'] },
-          { min: 6, max: 11, message: '手机长度在 6 到 11 个字符', trigger: ['blur', 'change'] }
+          // min max  长度范围
+          // { min: 6, max: 11, message: '手机长度在 6 到 11 个字符', trigger: ['blur', 'change'] }
+          // pattern:正则
+          { pattern: /^1\d{10}$/, message: '手机号长度为11位', trigger: ['blur', 'change'] }
+        ],
+        code: [
+          { required: true, message: '请输入验证码', trigger: ['blur', 'change'] },
+          { pattern: /^\d{6}$/, message: '验证码长度为6位', trigger: ['blur', 'change'] }
+        ],
+        agree: [
+          { validator: validatePass, trigger: ['blur', 'change'] }
         ]
       }
     }
   },
   methods: {
-    fn () {
-      if (!this.form.agree) {
-        // 在引入element-ui时  就在vue实例上添加了 message方法
-        this.$message({
-          showClose: true,
-          message: '请点击许可同意',
-          type: 'warning'
+    fn (a) {
+      // ref这个属性 需要通过$ref 来调用 确认对应的dom元素 或者 组件    然后去调用方法
+      this.$refs[a].validate((flag) => {
+        if (!flag) return
+        Login(this.form.mobile, this.form.code).then(res => {
+          console.log(res)
+          // 本地存储登录信息
+          localStorage.setItem('userInfo', JSON.stringify(res.data.data))
+          this.$message.success('登陆成功')
+          this.$router.push('/')
+        }).catch(err => {
+          this.$message.error('登录失败, 手机号或者验证码错误')
+          console.log(err)
         })
-        return
-      }
-      this.$axios.post('/mp/v1_0/authorizations', {
-        mobile: this.form.mobile,
-        code: this.form.code
-      }).then(res => {
-        this.$message.success('登陆成功')
-      }).catch(err => {
-        this.$message.error('登录失败, 手机号或者验证码错误')
-        console.log(err)
+        userPatch(this.form.name).then(res => {
+          console.log(res)
+        })
       })
     }
   }
