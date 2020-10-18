@@ -1,5 +1,4 @@
 import http from '@/utils/request.js'
-
 // 登录请求
 export const Login = (mobile, code) => {
   return http({
@@ -12,29 +11,23 @@ export const Login = (mobile, code) => {
   })
 }
 
+// 这里发送请求 会先到 拦截器 拿token
+
 // 主页获取个人信息请求
 export const Info = () => {
-  const manInfo = JSON.parse(localStorage.getItem('userInfo'))
   return http({
     method: 'get',
-    url: '/mp/v1_0/user/profile',
-    headers: {
-      Authorization: `Bearer ${manInfo.token}`
-    }
+    url: '/mp/v1_0/user/profile'
   })
 }
 
 // 编辑用户资料
 export const userPatch = (name) => {
-  const manPatch = JSON.parse(localStorage.getItem('userInfo'))
   return http({
     method: 'PATCH',
     url: '/mp/v1_0/user/profile',
     data: {
       name
-    },
-    headers: {
-      Authorization: `Bearer ${manPatch.token}`
     }
   })
 }

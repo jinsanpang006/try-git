@@ -28,7 +28,7 @@
 </template>
 <script>
 import { Login, userPatch } from '@/api/user.js'
-
+import { setUser } from '@/utils/storage.js'
 export default {
   name: 'Login', // 加个name, 是为了给组件起个名字, 在调试工具中能方便调试
   data () {
@@ -75,7 +75,7 @@ export default {
         Login(this.form.mobile, this.form.code).then(res => {
           console.log(res)
           // 本地存储登录信息
-          localStorage.setItem('userInfo', JSON.stringify(res.data.data))
+          setUser(res.data.data)
           this.$message.success('登陆成功')
           this.$router.push('/')
         }).catch(err => {

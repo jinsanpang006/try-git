@@ -9,35 +9,37 @@
   <!-- el-menu 整个菜单组件   -->
     <el-menu
     background-color="#002033"
+    router
+    :default-active="$route.path"
     :collapse='isCollapse'
     :collapse-transition='false'
     text-color="#fff"
     active-text-color="#ffd04b">
-    <el-menu-item index="1">
+    <el-menu-item index="/">
         <i class="el-icon-s-home"></i>
         <span slot="title">首页</span>
     </el-menu-item>
-    <el-menu-item index="2">
+    <el-menu-item index="/articles">
         <i class="el-icon-document"></i>
         <span slot="title">内容管理</span>
     </el-menu-item>
-    <el-menu-item index="3">
+    <el-menu-item index="/pictures">
         <i class="el-icon-picture"></i>
         <span slot="title">素材管理</span>
     </el-menu-item>
-    <el-menu-item index="4">
+    <el-menu-item index="/add-article">
         <i class="el-icon-s-promotion"></i>
         <span slot="title">发布文章</span>
     </el-menu-item>
-    <el-menu-item index="5">
+    <el-menu-item index="/comment">
         <i class="el-icon-chat-dot-round"></i>
         <span slot="title">评论管理</span>
     </el-menu-item>
-    <el-menu-item index="6">
+    <el-menu-item index="/fans">
         <i class="el-icon-setting"></i>
         <span slot="title">粉丝管理</span>
     </el-menu-item>
-    <el-menu-item index="7">
+    <el-menu-item index="/settings">
         <i class="el-icon-setting"></i>
         <span slot="title">个人设置</span>
     </el-menu-item>
@@ -59,12 +61,14 @@
 
         <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>设置</el-dropdown-item>
-            <el-dropdown-item>退出</el-dropdown-item>
+            <el-dropdown-item @click.native="del">退出</el-dropdown-item>
 
         </el-dropdown-menu>
         </el-dropdown>
     </el-header>
-    <el-main>金三胖</el-main>
+    <el-main>
+      <router-view></router-view>
+    </el-main>
   </el-container>
 </el-container>
   </div>
@@ -72,6 +76,7 @@
 
 <script>
 import { Info } from '@/api/user.js'
+import { delUser } from '@/utils/storage'
 export default {
   name: 'Layout',
   data () {
@@ -87,6 +92,27 @@ export default {
     Info().then(res => {
       this.user = res.data.data
     })
+  },
+  methods: {
+    del () {
+      delUser()
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$router.push('/login') // 不写这步的话还得刷新一下
+        this.$message({
+          type: 'success',
+          message: '成功退出!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '不退了'
+        })
+      })
+    }
   }
 }
 </script>
