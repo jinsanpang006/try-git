@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+      function abc2(num) {
+        if (num > 2) {
+          abc2(--num);//4 3 2 
+        }
+        document.write(num);//2 
+      }
+      abc2(5); //2234
+      
+
+      //---------------------------
+    //   function abc2(5) {
+    //     if (num > 2) {
+    //         function abc2(4) {
+    //     if (num > 2) {
+    //         function abc2(3) {
+    //     if (num > 2) {
+    //         function abc2(2) {
+    //     if (num > 2) {
+    //       abc2(2); 
+    //     }
+    //     document.write(num);   //2
+    //   }
+
+    //     }
+    //     document.write(num); 
+    //   }
+
+    //     }
+    //     document.write(num); 
+    //   }
+
+    //     }
+    //     document.write(num); 
+    //   }
+
+
+
+
+ 
+
+
+
+    </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 <template>
-  <div class="page404"></div>
+  <div class="page404">{{$route.path}}</div>
 </template>
 
 <script>

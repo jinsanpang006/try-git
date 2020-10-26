@@ -62,7 +62,6 @@
         <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>设置</el-dropdown-item>
             <el-dropdown-item @click.native="del">退出</el-dropdown-item>
-
         </el-dropdown-menu>
         </el-dropdown>
     </el-header>
@@ -91,6 +90,14 @@ export default {
   created () {
     Info().then(res => {
       this.user = res.data.data
+      this.$eventBus.$on('uploadName', (name) => {
+        // console.log(name)
+        this.user.name = name
+      })
+      this.$eventBus.$on('uploadImage', (img) => {
+        // console.log(img)
+        this.user.photo = img
+      })
     })
   },
   methods: {
@@ -101,6 +108,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        console.log(this.$route)
+
         this.$router.push('/login') // 不写这步的话还得刷新一下
         this.$message({
           type: 'success',

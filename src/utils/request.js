@@ -1,10 +1,19 @@
 import axios from 'axios'
 import { getUser } from '@/utils/storage.js'
+import JSONbig from 'json-bigint'
 
 const http = axios.create({
   baseURL: 'http://ttapi.research.itcast.cn',
-  timeout: 1000
-//   headers: { 'X-Custom-Header': 'foobar' }
+  transformResponse: [function (data) {
+    // console.log(data)// 这里的data是字符串，在这个字符串的是没有丢失精度的，所以需要在这里先把精度调好
+    try {
+      // 作用1：把json字符串转为js对象
+      // 作用2：把里面的大数字做安全处理
+      return JSONbig.parse(data)
+    } catch (err) {
+      return data
+    }
+  }]
 })
 
 // 添加请求拦截器(所有axios请求 在发送之前 都会先经过这个请求拦截器)

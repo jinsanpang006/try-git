@@ -82,9 +82,6 @@ export default {
           this.$message.error('登录失败, 手机号或者验证码错误')
           console.log(err)
         })
-        userPatch(this.form.name).then(res => {
-          console.log(res)
-        })
       })
     }
   }

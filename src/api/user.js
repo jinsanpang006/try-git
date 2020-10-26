@@ -22,12 +22,19 @@ export const Info = () => {
 }
 
 // 编辑用户资料
-export const userPatch = (name) => {
+export const userPatch = (data) => {
   return http({
     method: 'PATCH',
     url: '/mp/v1_0/user/profile',
-    data: {
-      name
-    }
+    data
+  })
+}
+
+// 编辑用户头像
+export const reqModUserImage = formData => {
+  return http({
+    method: 'patch',
+    url: '/mp/v1_0/user/photo',
+    data: formData
   })
 }
